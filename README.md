@@ -146,10 +146,6 @@ If you use PPsAMP in your research, please cite:
 }
 ```
 
-## License
-
-MIT License
-
 ## Contact
 
 For questions and issues, please open an issue on GitHub.
