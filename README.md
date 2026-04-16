@@ -41,20 +41,9 @@ Required files:
 - 
 ## Usage
 
-### Feature Extraction
-
-#### 1. PseAAC Feature Extraction
-
-```bash
-python feature-pseaac/PseAAC_1_4.py --fasta input.fasta --output features.csv
-```
-
-#### 2. ProtBERT Feature Extraction
-
-```bash
-python feature-t/feature_extract_test2.py --fasta input.fasta --model_name prot_bert_bfd --output features.h5
-```
-
+# Basic usage (assumes weights are in the root directory)
+chmod +x predict.sh
+./predict.sh input.fasta results.csv
 
 ## Project Structure
 
