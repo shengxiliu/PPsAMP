@@ -85,7 +85,7 @@ if __name__ == "__main__":
     num_classes = 2
     dropout = 0.5
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cpu")
     print(f"[Info] Using device: {device}")
     
     model = CrossAttentionModel(embedding_dim, num_heads, num_layers, pseaac_dim, protbert_dim, num_classes, dropout)
