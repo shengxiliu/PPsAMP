@@ -1,5 +1,6 @@
 import numpy as np
 import csv
+import argparse  # 新增：用于接收命令行参数
 from tqdm import tqdm  # 导入 tqdm 模块
 
 # 定义氨基酸的属性字典（Hydrophobicity，极性，电荷，等等）
@@ -17,16 +18,40 @@ amino_acid_properties = {
     'X': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 }
 
-# 读取.csv文件并提取序列
-def read_sequences_from_csv(file_path):
+# 升级版读取函数：支持读取 FASTA 和 之前的 CSV 格式
+def read_sequences(file_path):
     sequences = []
     with open(file_path, 'r') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            sequence = row["Sequence"]
-            # 将长度小于30的序列用 'X' 填充至30长度
-            sequence_padded = sequence + 'X' * (30 - len(sequence))
-            sequences.append(sequence_padded)
+        first_line = file.readline().strip()
+        file.seek(0) # 将文件指针拨回开头
+        
+        # 判断如果是 FASTA 格式 (以 '>' 开头)
+        if first_line.startswith('>'):
+            current_seq = ""
+            for line in file:
+                line = line.strip()
+                if line.startswith('>'):
+                    if current_seq:
+                        sequence_padded = current_seq + 'X' * max(0, 30 - len(current_seq))
+                        sequences.append(sequence_padded)
+                        current_seq = ""
+                else:
+                    current_seq += line
+            # 处理最后一条序列
+            if current_seq:
+                sequence_padded = current_seq + 'X' * max(0, 30 - len(current_seq))
+                sequences.append(sequence_padded)
+                
+        # 判断如果是 CSV 格式
+        else:
+            reader = csv.DictReader(file)
+            for row in reader:
+                sequence = row.get("Sequence", "")
+                if sequence:
+                    # 将长度小于30的序列用 'X' 填充至30长度
+                    sequence_padded = sequence + 'X' * max(0, 30 - len(sequence))
+                    sequences.append(sequence_padded)
+                    
     return sequences
 
 # 保存特征到.csv文件
@@ -73,20 +98,27 @@ def compute_pse_aac(sequence, k=2, lambda_=5):
 
     return features
 
-# 示例.csv文件路径
-csv_file_path = '/home/zhaozhimiao/XZ/HLAB/4/data/smorf_protein1.csv'
+# ================= 主程序入口 =================
+if __name__ == "__main__":
+    # 设置命令行参数解析
+    parser = argparse.ArgumentParser(description="Extract PseAAC features from sequences.")
+    parser.add_argument('--fasta', type=str, required=True, help="Input sequence file path (FASTA or CSV)")
+    parser.add_argument('--output', type=str, required=True, help="Output feature CSV file path")
+    args = parser.parse_args()
 
-# 读取序列
-sequences = read_sequences_from_csv(csv_file_path)
+    input_file_path = args.fasta
+    output_file_path = args.output
 
-# 计算每个序列的PseAAC特征并保存
-all_features = []
-for sequence in tqdm(sequences, desc="Computing PseAAC Features"):
-    pse_aac_features = compute_pse_aac(sequence, k=2)
-    all_features.append(pse_aac_features)
+    # 读取序列
+    sequences = read_sequences(input_file_path)
 
-# 保存特征到.csv文件
-output_file_path = '/home/zhaozhimiao/XZ/HLAB/4/feature/smorf_pseaac_nocdhit.csv'
-save_features_to_csv(all_features, output_file_path)
+    # 计算每个序列的PseAAC特征并保存
+    all_features = []
+    for sequence in tqdm(sequences, desc="Computing PseAAC Features"):
+        pse_aac_features = compute_pse_aac(sequence, k=2)
+        all_features.append(pse_aac_features)
 
-print(f"PseAAC 特征已保存至 {output_file_path}")
+    # 保存特征到.csv文件
+    save_features_to_csv(all_features, output_file_path)
+
+    print(f"PseAAC 特征已保存至 {output_file_path}")
