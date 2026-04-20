@@ -34,7 +34,7 @@ cd PPsAMP-main
 
 
 点击下载项目右侧release：https://github.com/shengxiliu/PPsAMP/releases
-
+保存到当前目录命名为finetuned_protbert
 # use conda
 conda env create -f requirements.yml
 conda activate ppsamp
