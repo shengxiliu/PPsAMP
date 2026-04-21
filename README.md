@@ -48,9 +48,6 @@ conda activate ppsamp
 ## Usage
 
 # Basic usage (assumes weights are in the root directory)
-chmod +x predict.sh
-./predict.sh input.fasta results.csv
-
 ```bash
 bash pseaac.sh exm.fast result.csv
 
