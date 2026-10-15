@@ -2,12 +2,13 @@
 
 **PPsAMP: A Deep Learning Based Framework for Identification of Short Antimicrobial Peptides by Fine-tuning Protein Language Model**
 
-
+PPsAMP 是一个基于深度学习框架，通过微调蛋白质语言模型来识别短链抗菌肽的工具。
 
 ## Features
 
 - **Multi-modal Feature Extraction**: Combines PseAAC (Pseudo Amino Acid Composition) and ProtBERT protein language model features
 - **Cross-Attention Mechanism**: Uses attention mechanism to effectively integrate features from different modalities
+- **Redundancy-Reduced Dataset**: Training and evaluation data are deduplicated by CD-HIT at 40% sequence identity to remove homologous redundancy
 - **High Accuracy**: Achieves excellent performance on benchmark datasets
 
 ## Installation
@@ -25,22 +26,13 @@
 
 # Download
 ```bash
-1.Download the relevant code
-（1）git clone https://github.com/shengxiliu/PPsAMP.git
+git clone https://github.com/shengxiliu/PPsAMP.git
 cd PPsAMP
-or (2)down DownLoad ZIP
-unzip DownLoad ZIP
-cd PPsAMP-main
 
-2.Download the relevant models
-Click to download on the right side of the project:
-release：https://github.com/shengxiliu/PPsAMP/releases
-
-Save to the current directory and name it as:finetuned_protbert
-
+点击下载项目右侧release：https://github.com/shengxiliu/PPsAMP/releases
 
 # use conda
-conda env create -f requirements.yml
+conda env create -f environment.yml
 conda activate ppsamp
 ```
 
@@ -48,41 +40,72 @@ conda activate ppsamp
 ## Usage
 
 # Basic usage (assumes weights are in the root directory)
+chmod +x predict.sh
+./predict.sh input.fasta results.csv
+
 ```bash
 bash pseaac.sh exm.fast result.csv
 
+## Datasets
+
+All sequences are deduplicated by **CD-HIT at 40% sequence identity** to eliminate homologous redundancy. Sequence lengths range from 11 to 30 amino acids.
+
+### Data Preparation Pipeline
+
+```
+Original data (17,238)
+  → CD-HIT 40% redundancy removal
+CD-HIT 40% representatives (7,522: 2,316 AMP / 5,206 non-AMP)
+  → split into train / val / test
+```
+
+### Split Statistics
+
+The CD-HIT 40% representatives are re-split into train / val / test at a 6:2:2 ratio.
+
+| Dataset | Original | CD-HIT 40% (used) |
+|---|---|---|
+| Train | 10,342 | **4,724** (1,514 AMP / 3,210 non-AMP) |
+| Val | 3,448 | **1,398** (400 AMP / 998 non-AMP) |
+| Test | 3,448 | **1,400** (402 AMP / 998 non-AMP) |
+| **Total** | **17,238** | **7,522** (2,316 AMP / 5,206 non-AMP) |
 
 ## Project Structure
 
 ```
 ```text
 PPsAMP/
-├── data/                  
-│   ├── test.csv          
-│   ├── train1.csv        
-│   └── val1.csv         
+├── data/                  # 数据集目录 (CD-HIT 40% 去冗余数据)
+│   ├── train_cdhit40_split.csv   # 训练集数据 (4,724)
+│   ├── val_cdhit40_split.csv     # 验证集数据 (1,398)
+│   ├── test_cdhit40_split.csv    # 测试集数据 (1,400)
+│   └── test_cdhit40_split.fasta  # 测试集数据 (FASTA 格式)
 │
-├── demo/                  
-│   └── attention1_4.py   
+├── models/                # 训练好的模型权重 (CD-HIT 40% 数据训练)
+│   ├── ablation_fusion.pth       # PPsAMP 融合模型 (主模型, threshold=0.3)
+│   ├── ablation_prot_only.pth    # ProtBERT 单特征模型
+│   └── ablation_pse_only.pth     # PseAAC 单特征模型
 │
-├── feature-pseaac/       
-│   └── PseAAC_1_4.py     
+├── demo/                  #  模型推理与核心代码
+│   └── attention1_4.py    # 结合注意力机制执行最终预测的主程序
 │
-├── feature-t/             
-│   └── feature_extract_test2.py 
+├── feature-pseaac/        # 传统特征提取模块
+│   └── PseAAC_1_4.py      # 用于提取多肽序列的 PseAAC (伪氨基酸组成) 特征
 │
-├── turning/               
-│   ├── finetune.sh      
-│   └── training_args.bin 
+├── feature-t/             # 深度学习特征提取模块
+│   └── feature_extract_test2.py # 调用 ProtBERT 提取序列的高维语义特征
 │
-├── .gitattributes         
-├── README.md              
-├── exm.fast              
-├── pseaac.sh             
-└── requirements.txt      
+├── turning/               #  模型微调与训练模块 (适合进阶用户)
+│   ├── finetune.sh        # 一键启动模型微调训练的脚本
+│   └── training_args.bin  # 预设的训练参数配置文件
+│
+├── .gitattributes         # Git 配置文件 (保持不用管它)
+├── README.md              # 项目说明文档 (你正在看的文件)
+├── exm.fast               # 例输入文件 (提供给你的测试用 FASTA 短序列)
+├── pseaac.sh              # 一键预测核心脚本 (小白必备，全自动流水线)
+└── requirements.txt       #  环境依赖清单 (用于一键安装所有需要的 Python 包)
 
 ```
-
 
 ## Citation
 
