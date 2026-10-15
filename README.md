@@ -2,7 +2,7 @@
 
 **PPsAMP: A Deep Learning Based Framework for Identification of Short Antimicrobial Peptides by Fine-tuning Protein Language Model**
 
-PPsAMP 是一个基于深度学习框架，通过微调蛋白质语言模型来识别短链抗菌肽的工具。
+PPsAMP is a deep learning framework for identifying short antimicrobial peptides by fine-tuning a protein language model.
 
 ## Features
 
@@ -29,7 +29,7 @@ PPsAMP 是一个基于深度学习框架，通过微调蛋白质语言模型来�
 git clone https://github.com/shengxiliu/PPsAMP.git
 cd PPsAMP
 
-点击下载项目右侧release：https://github.com/shengxiliu/PPsAMP/releases
+# download release assets: https://github.com/shengxiliu/PPsAMP/releases
 
 # use conda
 conda env create -f environment.yml
@@ -75,35 +75,35 @@ The CD-HIT 40% representatives are re-split into train / val / test at a 6:2:2 r
 ```
 ```text
 PPsAMP/
-├── data/                  # 数据集目录 (CD-HIT 40% 去冗余数据)
-│   ├── train_cdhit40_split.csv   # 训练集数据 (4,724)
-│   ├── val_cdhit40_split.csv     # 验证集数据 (1,398)
-│   ├── test_cdhit40_split.csv    # 测试集数据 (1,400)
-│   └── test_cdhit40_split.fasta  # 测试集数据 (FASTA 格式)
+├── data/                  # dataset for training and evaluation (CD-HIT 40% deduplicated)
+│   ├── train_cdhit40_split.csv   # training set (4,724)
+│   ├── val_cdhit40_split.csv     # validation set (1,398)
+│   ├── test_cdhit40_split.csv    # test set (1,400)
+│   └── test_cdhit40_split.fasta  # test set in FASTA format
 │
-├── models/                # 训练好的模型权重 (CD-HIT 40% 数据训练)
-│   ├── ablation_fusion.pth       # PPsAMP 融合模型 (主模型, threshold=0.3)
-│   ├── ablation_prot_only.pth    # ProtBERT 单特征模型
-│   └── ablation_pse_only.pth     # PseAAC 单特征模型
+├── models/                # trained model weights (CD-HIT 40% data)
+│   ├── ablation_fusion.pth       # PPsAMP fusion model (main, threshold=0.3)
+│   ├── ablation_prot_only.pth    # ProtBERT-only model
+│   └── ablation_pse_only.pth     # PseAAC-only model
 │
-├── demo/                  #  模型推理与核心代码
-│   └── attention1_4.py    # 结合注意力机制执行最终预测的主程序
+├── demo/                  # inference and core code
+│   └── attention1_4.py    # main program for final prediction with attention mechanism
 │
-├── feature-pseaac/        # 传统特征提取模块
-│   └── PseAAC_1_4.py      # 用于提取多肽序列的 PseAAC (伪氨基酸组成) 特征
+├── feature-pseaac/        # conventional feature extraction module
+│   └── PseAAC_1_4.py      # extract PseAAC (pseudo amino acid composition) features
 │
-├── feature-t/             # 深度学习特征提取模块
-│   └── feature_extract_test2.py # 调用 ProtBERT 提取序列的高维语义特征
+├── feature-t/             # deep learning feature extraction module
+│   └── feature_extract_test2.py # extract high-dimensional semantic features with ProtBERT
 │
-├── turning/               #  模型微调与训练模块 (适合进阶用户)
-│   ├── finetune.sh        # 一键启动模型微调训练的脚本
-│   └── training_args.bin  # 预设的训练参数配置文件
+├── turning/               # fine-tuning and training module (for advanced users)
+│   ├── finetune.sh        # one-click script to start fine-tuning
+│   └── training_args.bin  # preset training argument configuration
 │
-├── .gitattributes         # Git 配置文件 (保持不用管它)
-├── README.md              # 项目说明文档 (你正在看的文件)
-├── exm.fast               # 例输入文件 (提供给你的测试用 FASTA 短序列)
-├── pseaac.sh              # 一键预测核心脚本 (小白必备，全自动流水线)
-└── requirements.txt       #  环境依赖清单 (用于一键安装所有需要的 Python 包)
+├── .gitattributes         # Git configuration file (no need to modify)
+├── README.md              # project documentation (the file you are reading)
+├── exm.fast               # example input file (short FASTA sequences for testing)
+├── pseaac.sh              # one-click prediction script (fully automated pipeline)
+└── requirements.txt       # environment dependency list (install all required Python packages)
 
 ```
 
