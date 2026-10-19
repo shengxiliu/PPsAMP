@@ -8,7 +8,7 @@ PPsAMP is a deep learning framework for identifying short antimicrobial peptides
 
 - **Multi-modal Feature Extraction**: Combines PseAAC (Pseudo Amino Acid Composition) and ProtBERT protein language model features
 - **Cross-Attention Mechanism**: Uses attention mechanism to effectively integrate features from different modalities
-- **Redundancy-Reduced Dataset**: Training and evaluation data are deduplicated by CD-HIT at 40% sequence identity to remove homologous redundancy
+- **Redundancy-Reduced Dataset**: Training and evaluation data are deduplicated at 40% sequence similarity to remove homologous redundancy
 - **High Accuracy**: Achieves excellent performance on benchmark datasets
 
 ## Installation
@@ -24,7 +24,6 @@ PPsAMP is a deep learning framework for identifying short antimicrobial peptides
 
 ### Install Dependencies
 
-# Download
 ```bash
 git clone https://github.com/shengxiliu/PPsAMP.git
 cd PPsAMP
@@ -36,34 +35,53 @@ conda env create -f environment.yml
 conda activate ppsamp
 ```
 
-- 
 ## Usage
 
+```bash
 # Basic usage (assumes weights are in the root directory)
 chmod +x predict.sh
 ./predict.sh input.fasta results.csv
 
-```bash
+# Or use the all-in-one pipeline
 bash pseaac.sh exm.fast result.csv
+```
+
+## Data Deduplication
+
+Sequences are deduplicated by greedy clustering based on pairwise sequence similarity. Sequence lengths range from 11 to 30 amino acids.
+
+**Algorithm** (`sequence_dedup.py`):
+
+1. Sort sequences by length in descending order
+2. For each sequence, compare to existing cluster representatives
+3. Assign to the first cluster with similarity ≥ 0.40, or start a new cluster
+
+**Similarity definition**:
+
+```python
+identity = (number of identical residues at the same position) / min(len(seq1), len(seq2))
+```
+
+No gap alignment is performed. This is a position-wise comparison that tends to underestimate true biological identity for sequences of unequal length.
+
+**Threshold**: 0.40
 
 ## Datasets
-
-All sequences are deduplicated by **CD-HIT at 40% sequence identity** to eliminate homologous redundancy. Sequence lengths range from 11 to 30 amino acids.
 
 ### Data Preparation Pipeline
 
 ```
 Original data (17,238)
-  → CD-HIT 40% redundancy removal
-CD-HIT 40% representatives (7,522: 2,316 AMP / 5,206 non-AMP)
-  → split into train / val / test
+  -> 40% similarity deduplication
+7,522 representatives (2,316 AMP / 5,206 non-AMP)
+  -> split into train / val / test
 ```
 
 ### Split Statistics
 
-The CD-HIT 40% representatives are re-split into train / val / test at a 6:2:2 ratio.
+The deduplicated representatives are re-split into train / val / test at a 6:2:2 ratio.
 
-| Dataset | Original | CD-HIT 40% (used) |
+| Dataset | Original | Deduplicated (used) |
 |---|---|---|
 | Train | 10,342 | **4,724** (1,514 AMP / 3,210 non-AMP) |
 | Val | 3,448 | **1,398** (400 AMP / 998 non-AMP) |
@@ -73,16 +91,14 @@ The CD-HIT 40% representatives are re-split into train / val / test at a 6:2:2 r
 ## Project Structure
 
 ```
-```text
 PPsAMP/
-├── data/                  # dataset for training and evaluation (CD-HIT 40% deduplicated)
-│   ├── train_cdhit40_split.csv   # training set (4,724)
-│   ├── val_cdhit40_split.csv     # validation set (1,398)
-│   ├── test_cdhit40_split.csv    # test set (1,400)
-│   └── test_cdhit40_split.fasta  # test set in FASTA format
+├── data/                  # dataset for training and evaluation (40% similarity deduplicated)
+│   ├── train_dedup_split.csv   # training set (4,724)
+│   ├── val_dedup_split.csv     # validation set (1,398)
+│   └── test_dedup_split.csv    # test set (1,400)
 │
-├── models/                # trained model weights (CD-HIT 40% data)
-│   ├── ablation_fusion.pth       # PPsAMP fusion model (main, threshold=0.3)
+├── models/                # trained model weights (40% similarity data)
+│   ├── ablation_fusion.pth       # PPsAMP fusion model (main, decision threshold=0.3)
 │   ├── ablation_prot_only.pth    # ProtBERT-only model
 │   └── ablation_pse_only.pth     # PseAAC-only model
 │
@@ -101,10 +117,10 @@ PPsAMP/
 │
 ├── .gitattributes         # Git configuration file (no need to modify)
 ├── README.md              # project documentation (the file you are reading)
+├── sequence_dedup.py      # data deduplication script (greedy clustering at 40% similarity)
 ├── exm.fast               # example input file (short FASTA sequences for testing)
 ├── pseaac.sh              # one-click prediction script (fully automated pipeline)
 └── requirements.txt       # environment dependency list (install all required Python packages)
-
 ```
 
 ## Citation
