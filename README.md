@@ -115,9 +115,8 @@ If you use PPsAMP in your research, please cite:
 
 ```
 @article{PPsAMP,
-  title={PPsAMP: A Deep Learning Based Framework for Identification of Short Antimicrobial Peptides},
-  author={},
-  year={2024}
+  title={PPsAMP: A Novel Computational Framework for Short Antimicrobial Peptide Identification by Fusing Fine-Tuned Semantic and Physicochemical Features via Cross-Attention },
+  year={2026}
 }
 ```
 
@@ -130,18 +129,10 @@ For questions and issues, please open an issue on GitHub.
 The paper-aligned pipeline uses residue-level, fine-tuned ProtBert-BFD embeddings rather than a single pooled sequence vector. It is separate from the legacy global-feature checkpoints in `models/`.
 
 ```
-data/*.csv
-  -> fine-tuned ProtBert-BFD token embeddings [B, L, 1024] + padding masks
-  -> PseAAC descriptors [B, 420]
-  -> PseAAC as Query; ProtBert tokens as Key/Value
-  -> Cross-Attention + two Self-Attention/FFN blocks
-  -> binary AMP classifier
-```
 
 ### Included trained assets
 
 - `models/protbert_finetuned/`: fine-tuned ProtBert-BFD checkpoint used for token-level feature extraction (Git LFS).
-- `models/token_attention/best_model.pt`: trained token-level Cross-Attention classifier. This checkpoint produced the paper's best single-run test result: Accuracy 0.8700, F1 0.7708, MCC 0.6802, Sensitivity 0.7612, and Specificity 0.9138.
 
 Fetch LFS assets after cloning:
 
