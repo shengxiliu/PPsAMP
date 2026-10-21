@@ -101,20 +101,6 @@ PPsAMP/
 │   ├── ablation_fusion.pth       # PPsAMP fusion model (main, decision threshold=0.3)
 │   ├── ablation_prot_only.pth    # ProtBERT-only model
 │   └── ablation_pse_only.pth     # PseAAC-only model
-│
-├── demo/                  # inference and core code
-│   └── attention1_4.py    # main program for final prediction with attention mechanism
-│
-├── feature-pseaac/        # conventional feature extraction module
-│   └── PseAAC_1_4.py      # extract PseAAC (pseudo amino acid composition) features
-│
-├── feature-t/             # deep learning feature extraction module
-│   └── feature_extract_test2.py # extract high-dimensional semantic features with ProtBERT
-│
-├── turning/               # fine-tuning and training module (for advanced users)
-│   ├── finetune.sh        # one-click script to start fine-tuning
-│   └── training_args.bin  # preset training argument configuration
-│
 ├── .gitattributes         # Git configuration file (no need to modify)
 ├── README.md              # project documentation (the file you are reading)
 ├── sequence_dedup.py      # data deduplication script (greedy clustering at 40% similarity)
