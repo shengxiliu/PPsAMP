@@ -64,15 +64,12 @@ identity = (number of identical residues at the same position) / min(len(seq1), 
 
 No gap alignment is performed. This is a position-wise comparison that tends to underestimate true biological identity for sequences of unequal length.
 
-**Threshold**: 0.40
 
 ## Datasets
 
 ### Data Preparation Pipeline
 
 ```
-Original data (17,238)
-  -> 40% similarity deduplication
 7,522 representatives (2,316 AMP / 5,206 non-AMP)
   -> split into train / val / test
 ```
@@ -120,9 +117,9 @@ If you use PPsAMP in your research, please cite:
 }
 ```
 
-## Contact
+## Contact 
 
-For questions and issues, please open an issue on GitHub.
+For questions and issues, please send an email to the liushengxi1225@163.com.
 
 ## Paper-Reproduction Pipeline
 
