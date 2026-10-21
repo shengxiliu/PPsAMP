@@ -81,12 +81,12 @@ Original data (17,238)
 
 The deduplicated representatives are re-split into train / val / test at a 6:2:2 ratio.
 
-| Dataset | Original | Deduplicated (used) |
+| Dataset |
 |---|---|---|
-| Train | 10,342 | **4,724** (1,514 AMP / 3,210 non-AMP) |
-| Val | 3,448 | **1,398** (400 AMP / 998 non-AMP) |
-| Test | 3,448 | **1,400** (402 AMP / 998 non-AMP) |
-| **Total** | **17,238** | **7,522** (2,316 AMP / 5,206 non-AMP) |
+| Train |  **4,724** (1,514 AMP / 3,210 non-AMP) |
+| Val  | **1,398** (400 AMP / 998 non-AMP) |
+| Test | **1,400** (402 AMP / 998 non-AMP) |
+| **Total** |**7,522** (2,316 AMP / 5,206 non-AMP) |
 
 ## Project Structure
 
